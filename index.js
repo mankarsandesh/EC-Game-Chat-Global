@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const {isUser, saveMessage} = require('./db/db');
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3001;
 
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -25,7 +25,9 @@ app.use(cors(corsOptions));
 app.get('/:id', async (req, res) => {
     try {
         userId = req.params.id;
+        
         const user = await isUser(userId);
+        //console.log(user);
         if(!user) {
             res.send('User does not exist').status(404);
         }    

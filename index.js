@@ -44,8 +44,13 @@ const listener = io.listen(http);
 listener.sockets.on('connection', (socket) => {
     console.log('Client is connected', socket.handshake.query.userId);
     const userId = socket.handshake.query.userId;
+    const name = socket.handshake.query.name;
     socket.on('send-message', (data) => {
-        io.emit('new-message', (data));
+        console.log(data.name);
+        io.emit('new-message', ({
+            message: data.message,
+            name: data.name
+        }));
         saveMessage(userId, data).then((data) => {
             console.log('message saved');
         }).catch(error => console.log(error));

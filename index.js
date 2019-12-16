@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const {isUser, saveMessage} = require('./db/db');
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -47,6 +47,7 @@ listener.sockets.on('connection', (socket) => {
     socket.on('send-message', (data) => {
         io.emit('new-message', (data));
         saveMessage(userId, data).then((data) => {
+            console.log('message saved');
         }).catch(error => console.log(error));
     });
 });

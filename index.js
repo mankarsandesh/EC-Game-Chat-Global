@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const {isUser, saveMessage} = require('./db/db');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use((req, res, next) => {

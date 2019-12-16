@@ -1,4 +1,4 @@
-//Connect DB and fetch stocks from DB
+//Connect DB
 async function connectDB() {
     const mysql = require('mysql2/promise');
     const db = await mysql.createConnection({
@@ -18,16 +18,16 @@ connectDB().then((data) => {
 
 //check if a user exists in the database
 async function isUser (id) {
-    // const db = await connectDB();
     const query = `SELECT * FROM users WHERE userId = "${id}"`;
     const user = await db.execute(query);
     return user[0];
 }
 
+//Save Message in the DB
 async function saveMessage (userId, userMessage) {
     try {
-        const query = `INSERT INTO chat(type,userId,userMessage) values(2,${userId},"${userMessage}")`;
-        const result = await db.execute(query);
+        const query = `INSERT INTO chat(type,userId,userMessage) VALUES(2,"${userId}","${userMessage}")`;
+        await db.execute(query);
     } catch (error) {
         console.log('Unable to insert messages in the database');
     }

@@ -21,19 +21,18 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.get('/:id', async (req, res) => {
-    // try {
 
-    // } catch (error) {
-    //     res.send().status(500);
-    // }
-    userId = req.params.id;
-    const user = await isUser(userId);
-    console.log(user);
-    if(!user) {
-        res.send('User does not exist').status(404);
-    }    
-    res.sendFile(__dirname + '/index.html');
+app.get('/:id', async (req, res) => {
+    try {
+        userId = req.params.id;
+        const user = await isUser(userId);
+        if(!user) {
+            res.send('User does not exist').status(404);
+        }    
+        res.sendFile(__dirname + '/index.html');
+    } catch (error) {
+        res.send().status(500);
+    }
 });
 
 http.listen(PORT, () => {
@@ -46,10 +45,8 @@ listener.sockets.on('connection', (socket) => {
     console.log('Client is connected', socket.handshake.query.userId);
     const userId = socket.handshake.query.userId;
     socket.on('send-message', (data) => {
-        console.log(userId, data);
         io.emit('new-message', (data));
         saveMessage(userId, data).then((data) => {
-            console.log('Message saved');
         }).catch(error => console.log(error));
     });
 });

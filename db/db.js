@@ -26,7 +26,7 @@ async function isUser (id) {
 //Save Message in the DB
 async function saveMessage (userId, userMessage) {
     try {
-        const query = `INSERT INTO chat(type,userId,userMessage) VALUES(2,"${userId}","${userMessage}")`;
+        const query = `INSERT INTO chat(chatType,userId,userMessage) VALUES(2,"${userId}","${userMessage}")`;
         await db.execute(query);
     } catch (error) {
         console.log('Unable to insert messages in the database');

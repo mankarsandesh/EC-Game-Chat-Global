@@ -20,7 +20,7 @@
     <script>
         $(function () {
             const userId = location.pathname.slice(1);
-            const socket = io.connect('localhost:5001', {
+            const socket = io.connect('localhost:3000', {
                 transports: ['polling'],
                 query: `userId=${userId}`
             });

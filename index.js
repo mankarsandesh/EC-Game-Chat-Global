@@ -5,11 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const {isUser, saveMessage} = require('./db/db');
 
-<<<<<<< HEAD
 const PORT = process.env.PORT || 3001;
-=======
-const PORT = process.env.PORT || 5000;
->>>>>>> f8fec69dc9639f9d46241b5654fc4ab2fcf6bb0f
 
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -50,15 +46,9 @@ const listener = io.listen(http);
 listener.sockets.on('connection', (socket) => {
     console.log('Client is connected', socket.handshake.query.userId);
     const userId = socket.handshake.query.userId;
-    const name = socket.handshake.query.name;
     socket.on('send-message', (data) => {
-        console.log(data.name);
-        io.emit('new-message', ({
-            message: data.message,
-            name: data.name
-        }));
-        saveMessage(userId, data).then((data) => {
-            console.log('message saved');
+        io.emit('new-message', data);
+        saveMessage(userId, data.message).then((data) => {
         }).catch(error => console.log(error));
     });
 });

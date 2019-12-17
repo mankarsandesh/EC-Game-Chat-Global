@@ -20,7 +20,7 @@
     <script>
         $(function () {
             const userId = location.pathname.slice(1);
-            const socket = io.connect('localhost:5000', {
+            const socket = io.connect('localhost:3001', {
                 transports: ['polling'],
                 query: `userId=${userId}&name=bank`
             });
@@ -34,7 +34,8 @@
             return false;
           });
           socket.on('new-message', function(data){
-            $('#messages').append($('<li>').text(data.message));
+            $('#messages').append($('<li>').text(data.name));
+              $('#messages').append($('<li>').text(data.message));
           });
         });
       </script>

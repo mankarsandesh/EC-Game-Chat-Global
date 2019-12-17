@@ -12,6 +12,7 @@ async function connectDB() {
 }
 
 let db;
+//Inititate DB connection
 connectDB().then((data) => {
     db = data;
 }).catch(error => console.log(error));

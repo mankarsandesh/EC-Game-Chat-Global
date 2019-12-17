@@ -24,8 +24,10 @@
                 transports: ['polling'],
                 query: `userId=${userId}&name=bank`
             });
+          //On form submission
           $('form').submit(function(e){
             e.preventDefault(); // prevents page reloading
+            //Event emitter on submitting new message by client
             socket.emit('send-message', {
               message: $('#m').val(),
               name: 'bank'
@@ -33,6 +35,7 @@
             $('#m').val('');
             return false;
           });
+          //Event listener on receiving new message from server
           socket.on('new-message', function(data){
             $('#messages').append($('<li>').text(data.name));
               $('#messages').append($('<li>').text(data.message));

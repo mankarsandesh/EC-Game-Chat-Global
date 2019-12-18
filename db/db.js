@@ -5,7 +5,7 @@ async function connectDB() {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'stockadmin'
+        database: 'stockadminTNK'
     });
     console.log('Database is conneced');
     return db;
@@ -24,7 +24,6 @@ async function isUser (id) {
     console.log(user);
     return user[0];
 }
-
 //Save Message in the DB
 async function saveMessage (userId, userMessage) {
     try {

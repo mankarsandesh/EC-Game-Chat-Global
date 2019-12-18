@@ -44,21 +44,17 @@ http.listen(PORT, () => {
 
 //Inititate socket listener
 const listener = io.listen(http);
-
 listener.sockets.on('connection', (socket) => {
     console.log('Client is connected', socket.handshake.query.userId);
-    //fetch username and userid from query parameters
-    const userId = socket.handshake.query.userId;
-    const name = socket.handshake.query.name;
-    //event listener on receiving message from client
     socket.on('send-message', (data) => {
         //Event emitter for sending messages to all clients
         io.emit('new-message', ({
             message: data.message,
-            name: data.name
+            name: data.name,
+            userId : data.userId
         }));
         //Save message in the database
-        saveMessage(userId, data.message).then((data) => {
+        saveMessage(data.userId,data.message).then((data) => {
             console.log('message saved');
         }).catch(error => console.log(error));
     });

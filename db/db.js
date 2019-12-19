@@ -5,14 +5,14 @@ async function connectDB() {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'stockadminTNK'
+        database: 'stockadmin'
     });
     console.log('Database is conneced');
     return db;
 }
 
 let db;
-//Inititate DB connection
+//Initiate DB connection
 connectDB().then((data) => {
     db = data;
 }).catch(error => console.log(error));
@@ -21,9 +21,9 @@ connectDB().then((data) => {
 async function isUser (id) {
     const query = `SELECT * FROM users WHERE userId = "${id}"`;
     const user = await db.execute(query);
-    console.log(user);
     return user[0];
 }
+
 //Save Message in the DB
 async function saveMessage (userId, userMessage) {
     try {
@@ -34,9 +34,22 @@ async function saveMessage (userId, userMessage) {
     }
 }
 
+async function getAllMessages () {
+    try {
+        const query = `SELECT * FROM chat`;
+        const messages = await db.execute(query);
+        console.log(messages[0]);
+        return messages[0.
+        ];
+    } catch (error) {
+        console.log('Unable to fetch messages');
+    }
+}
+
 module.exports = {
     isUser,
-    saveMessage
+    saveMessage,
+    getAllMessages
 }
 
 

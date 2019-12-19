@@ -3,7 +3,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const {isUser, saveMessage} = require('./db/db');
+const {isUser, saveMessage, getAllMessages} = require('./db/db');
 
 const PORT = process.env.PORT || 5000;
 //bodyparser middleware
@@ -23,18 +23,31 @@ const corsOptions = {
 //CORS middleware
 app.use(cors(corsOptions));
 
-app.get('/:id', async (req, res) => {
+app.get('/chat/:id', async (req, res) => {
     try {
         userId = req.params.id;
         //Check if a user exist
         const user = await isUser(userId);
-        //console.log(user);
-        if(!user) {
+        if(!user[0]) {
             res.send('User does not exist').status(404);
-        }    
-        res.sendFile(__dirname + '/index.html');
+        } else {
+            res.sendFile(__dirname + '/index.html');
+        } 
     } catch (error) {
-        res.send().status(500);
+        res.status(500).send();
+    }
+});
+
+app.get('/allmessages', async (req, res) => {
+    try {
+        const messages = await getAllMessages();
+        if(!messages[0]) {
+            res.status(404).send('No messages found')
+        } else {
+            res.status(200).send(messages);
+        }
+    } catch (error) {
+        res.status(500).send('Internal server error');
     }
 });
 

@@ -28,7 +28,7 @@
           $('form').submit(function(e){
             e.preventDefault(); // prevents page reloading
             //Event emitter on submitting new message by client
-            socket.emit('send-message', {
+            socket.emit('send-message-global', {
               message: $('#m').val(),
               name: 'bank'
             });
@@ -36,7 +36,7 @@
             return false;
           });
           //Event listener on receiving new message from server
-          socket.on('new-message', function(data){
+          socket.on('new-message-global', function(data){
             $('#messages').append($('<li>').text(data.name));
               $('#messages').append($('<li>').text(data.message));
           });

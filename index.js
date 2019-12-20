@@ -3,6 +3,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cleanMessage = require('./filters/filters');
 const {isUser, saveMessage, getAllMessages} = require('./controller/controller');
 
 const PORT = process.env.PORT || 5000;
@@ -41,7 +42,8 @@ app.get('/chat/:id', async (req, res) => {
 app.get('/allmessages', async (req, res) => {
     try {
         const messages = await getAllMessages();
-        if(!messages[0]) {
+        console.log(messages.data);
+        if(!messages.data[0]) {
             res.status(404).send('No messages found')
         } else {
             res.status(200).send(messages);
@@ -66,11 +68,12 @@ listener.sockets.on('connection', (socket) => {
     const userId = socket.handshake.query.userId;
     console.log('Client is connected', userId);
     io.emit('chat-global', `Client ${userId} is connected`);
-    socket.on('send-message', (data) => {
+    socket.on('send-message-global', (data) => {
+        data.message = cleanMessage(data.message);
         //Event emitter for sending messages to all clients
-        io.emit('new-message', data);
+        io.emit('new-message-global', data);
         //Save message in the database
-        saveMessage(data.userId,data.name, data.message).then((data) => {
+        saveMessage(data.userId, data.name, data.message).then((data) => {
             console.log('message saved');
         }).catch(error => console.log(error));
     });

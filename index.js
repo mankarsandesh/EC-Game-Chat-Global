@@ -3,7 +3,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const {isUser, saveMessage, getAllMessages} = require('./db/db');
+const {isUser, saveMessage, getAllMessages} = require('./controller/controller');
 
 const PORT = process.env.PORT || 5000;
 //bodyparser middleware
@@ -34,7 +34,7 @@ app.get('/chat/:id', async (req, res) => {
             res.sendFile(__dirname + '/index.html');
         } 
     } catch (error) {
-        res.status(500).send();
+        res.status(500).send('Internal server error');
     }
 });
 
@@ -58,16 +58,19 @@ http.listen(PORT, () => {
 //Inititate socket listener
 const listener = io.listen(http);
 listener.sockets.on('connection', (socket) => {
-    console.log('Client is connected', socket.handshake.query.userId);
+    // const user = await isUser(userId);
+    // if(!user[0]) {
+    //     socket.disconnect(true);
+    //     console.log('disconnected');
+    // }
+    const userId = socket.handshake.query.userId;
+    console.log('Client is connected', userId);
+    io.emit('chat-global', `Client ${userId} is connected`);
     socket.on('send-message', (data) => {
         //Event emitter for sending messages to all clients
-        io.emit('new-message', ({
-            message: data.message,
-            name: data.name,
-            userId : data.userId
-        }));
+        io.emit('new-message', data);
         //Save message in the database
-        saveMessage(data.userId,data.message).then((data) => {
+        saveMessage(data.userId,data.name, data.message).then((data) => {
             console.log('message saved');
         }).catch(error => console.log(error));
     });

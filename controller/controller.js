@@ -27,7 +27,7 @@ async function getAllMessages () {
     try {
         const query = `SELECT * FROM chat where chatType=0`;
         const data = await db.execute(query);
-        const messages = formatMesasage(data[0]);
+        const messages = formatMessage(data[0]);
         return messages;
     } catch (error) {
         console.log('Unable to fetch messages');
@@ -35,7 +35,7 @@ async function getAllMessages () {
 }
 
 //Format message
-function formatMesasage(messages) {
+function formatMessage(messages) {
     let temp = [];
     for(let i=0; i<messages.length; i++) {
         let message = {

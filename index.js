@@ -57,7 +57,7 @@ http.listen(PORT, () => {
     console.log(`Server is up on port ${PORT}`);
 });
 
-//Inititate socket listener
+//Initiate socket listener
 const listener = io.listen(http);
 listener.sockets.on('connection', (socket) => {
     // const user = await isUser(userId);

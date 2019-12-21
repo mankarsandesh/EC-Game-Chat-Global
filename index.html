@@ -40,6 +40,13 @@
             $('#messages').append($('<li>').text(data.name));
               $('#messages').append($('<li>').text(data.message));
           });
+          socket.on('user-count-global', (count) => {
+            console.log(`${count} users are online`);
+          });
+          socket.on('chat-global', (data) => {
+            console.log(data);
+            $('#messages').append($('<li>').text(data));
+          })
         });
       </script>
     <ul id="messages"></ul>

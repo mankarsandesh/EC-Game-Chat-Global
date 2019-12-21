@@ -7,6 +7,7 @@ const cleanMessage = require('./filters/filters');
 const {isUser, saveMessage, getAllMessages} = require('./controller/controller');
 
 const PORT = process.env.PORT || 5000;
+const users = [];
 //bodyparser middleware
 app.use(bodyParser.json());
 //setting headers middleware
@@ -66,7 +67,22 @@ listener.sockets.on('connection', (socket) => {
     //     console.log('disconnected');
     // }
     const userId = socket.handshake.query.userId;
+    if(!users.includes(userId)) {
+        users.push(userId);
+    }
     console.log('Client is connected', userId);
+    console.log(`${users.length} users are online`);
+    console.log(users);
+    io.emit('user-count-global', (users.length));
+    socket.on('disconnect', () => {
+        const index = users.findIndex(user => user === userId);
+        users.splice(index, 1);
+        io.emit('chat-global', `${userId} is disconnected`);
+        console.log(`Client ${userId} is disconnected`);
+        console.log(`${users.length} users are online`);
+        console.log(users);
+        io.emit('user-count-global', (users.length));
+    });
     io.emit('chat-global', `Client ${userId} is connected`);
     socket.on('send-message-global', (data) => {
         data.message = cleanMessage(data.message);

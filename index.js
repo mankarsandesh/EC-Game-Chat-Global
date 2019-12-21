@@ -60,6 +60,8 @@ http.listen(PORT, () => {
 
 //Initiate socket listener
 const listener = io.listen(http);
+
+//Event listener when client gets connected
 listener.sockets.on('connection', (socket) => {
     // const user = await isUser(userId);
     // if(!user[0]) {
@@ -67,27 +69,46 @@ listener.sockets.on('connection', (socket) => {
     //     console.log('disconnected');
     // }
     const userId = socket.handshake.query.userId;
+
+    //Check if user is already present or not
     if(!users.includes(userId)) {
         users.push(userId);
     }
     console.log('Client is connected', userId);
     console.log(`${users.length} users are online`);
     console.log(users);
+
+    //Event emitter for users count
     io.emit('user-count-global', (users.length));
+
+    //Event listener when client gets disconnected
     socket.on('disconnect', () => {
+        //find the index of user in the users array
         const index = users.findIndex(user => user === userId);
+        //Remove the user from the users array 
         users.splice(index, 1);
+
+        //Event emitter when user successfully gets disconnected
         io.emit('chat-global', `${userId} is disconnected`);
         console.log(`Client ${userId} is disconnected`);
         console.log(`${users.length} users are online`);
         console.log(users);
+
+        //After user got successfully disconnected all clients will know how many users are online.... Event emitter for users count
         io.emit('user-count-global', (users.length));
     });
+
+    //Event emitter when client gets connected
     io.emit('chat-global', `Client ${userId} is connected`);
+
+    //Event listener when client sends new message
     socket.on('send-message-global', (data) => {
+        //Check the message if it contains any bad or abusive words (Also checks the phone number)
         data.message = cleanMessage(data.message);
+
         //Event emitter for sending messages to all clients
         io.emit('new-message-global', data);
+        
         //Save message in the database
         saveMessage(data.userId, data.name, data.message).then((data) => {
             console.log('message saved');

@@ -19,7 +19,7 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
         $(function () {
-            const userId = location.pathname.slice(1);
+            const userId = location.pathname.slice(6);
             const socket = io.connect('localhost:5000', {
                 transports: ['polling'],
                 query: `userId=${userId}&name=bank`
@@ -40,9 +40,13 @@
             $('#messages').append($('<li>').text(data.name));
               $('#messages').append($('<li>').text(data.message));
           });
+
+          //Users count when client gets connected or disconnected
           socket.on('user-count-global', (count) => {
             console.log(`${count} users are online`);
           });
+
+          //Notification when client gets connected
           socket.on('chat-global', (data) => {
             console.log(data);
             $('#messages').append($('<li>').text(data));

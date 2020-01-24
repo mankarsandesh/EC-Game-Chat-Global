@@ -1,24 +1,27 @@
-const {connectDB} = require('../db/db');
+const { QueryTypes } = require('sequelize');
+const sequelize = require('../db/db');
 
-let db;
-connectDB().then((data) => {
-    db = data;
-}).catch(error => console.log(error));
 
 //check if a user exists in the database
 async function isUser (id) {
-    const query = `SELECT * FROM users WHERE userId = "${id}"`;
-    const user = await db.execute(query);
-    return user[0];
+    try {
+        const query = `SELECT * FROM users WHERE userId = "${id}"`;
+        const user = await sequelize.query(query, { type: QueryTypes.SELECT });
+        return user;
+    } catch (error) {
+        console.log(error);
+        throw new Error();
+    }
 }
 
 //Save Message in the DB
 async function saveMessage (userId, userName, userMessage) {
     try {
-        const query = `INSERT INTO chat(userId,userName,userMessage) VALUES("${userId}","${userName}",${db.escape(userMessage)})`;
-        await db.execute(query);
+        const query = `INSERT INTO chat(userId,userName,userMessage) VALUES("${userId}","${userName}","${userMessage}")`;
+        await sequelize.query(query, { type: QueryTypes.INSERT });
     } catch (error) {
-        console.log('Unable to insert messages in the database');
+        console.log(error);
+        throw new Error();
     }
 }
 
@@ -26,8 +29,8 @@ async function saveMessage (userId, userName, userMessage) {
 async function getAllMessages () {
     try {
         const query = `SELECT * FROM chat where chatType=0`;
-        const data = await db.execute(query);
-        const messages = formatMessage(data[0]);
+        const data = await sequelize.query(query, { type: QueryTypes.SELECT });
+        const messages = formatMessage(data);
         return messages;
     } catch (error) {
         console.log('Unable to fetch messages');
@@ -37,6 +40,7 @@ async function getAllMessages () {
 //Format message
 function formatMessage(messages) {
     let temp = [];
+    console.log(messages);
     for(let i=0; i<messages.length; i++) {
         let message = {
             userId: messages[i].userId,
